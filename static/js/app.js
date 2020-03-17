@@ -28,8 +28,43 @@ function buildCharts(sample) {
   console.log("hello buildCharts")
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
-
+  let chartsURL = `/samples/${sample}`
     // @TODO: Build a Bubble Chart using the sample data
+
+    d3.json(chartsURL).then(function(data){
+      let trace1 = [{
+        x: data.otu_ids,
+        y: data.sample_values,
+        text: data.otu_labels,
+        mode: "markers",
+        marker: {
+          size: data.sample_values,
+          color: data.otu_ids,
+          colorscale: "Earth"
+        }
+      }]
+    
+
+      let layout = {
+        title: "Belly Button Bacteria",
+        showlegend: true,
+        xaxis: {title: "OTU ID"}
+      }
+
+      Plotly.newPlot("bubble", trace1, layout)
+
+      let trace2 = [{
+        values: data.sample_values.sort((a, b) => (b - a)).slice(0, 10),
+        labels: data.otu_ids.slice(0, 10),
+        hovertext: data.otu_labels.slice(0, 10),
+        type: "pie"
+      }]
+
+
+      Plotly.newPlot("pie", trace2)
+
+    })
+
 
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
